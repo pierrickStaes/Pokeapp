@@ -35,7 +35,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/equipe.png')} />
                 ),
-                barStyle: {backgroundColor: 'red'}
+                barStyle: {backgroundColor: '#bd0c27'}
             }
         },
         Capture: {
@@ -45,7 +45,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/capture.png')} />
                 ),
-                barStyle: {backgroundColor: 'red'}
+                barStyle: {backgroundColor: '#bd0c27'}
             }
         },
         Pokedex: {
@@ -55,7 +55,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/pokedex.png')} />
                 ),
-                barStyle: {backgroundColor: 'red'}
+                barStyle: {backgroundColor: '#bd0c27'}
             }
         }
     },
