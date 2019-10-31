@@ -2,8 +2,8 @@ import CapturePage from '../pages/CapturePage';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import PokedexPage from '../pages/PokedexPage';
 import EquipePage from '../pages/EquipePage';
-import Icon from 'react-native-vector-icons/Ionicons';
 import React from 'react';
+import {Image} from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack';
 
 /*const FavoritesNavigator = createStackNavigator(
@@ -33,9 +33,9 @@ const tabNavigator = createMaterialBottomTabNavigator(
             navigationOptions: {
                 tabBarLabel:'Equipe',
                 tabBarIcon:({tintColor})=> (
-                    <Icon style={[{color: tintColor}]} size ={25} name ={'ios-home'} />
+                    <Image style={{height:25, width:25}} source={require('../assets/equipe.png')} />
                 ),
-                barStyle: {backgroundColor: '#496c89'}
+                barStyle: {backgroundColor: 'red'}
             }
         },
         Capture: {
@@ -43,9 +43,9 @@ const tabNavigator = createMaterialBottomTabNavigator(
             navigationOptions: {
                 tabBarLabel:'Capture',
                 tabBarIcon:({tintColor})=> (
-                    <Icon style={[{color: tintColor}]} size ={25} name ={'ios-star'} />
+                    <Image style={{height:25, width:25}} source={require('../assets/capture.png')} />
                 ),
-                barStyle: {backgroundColor: '#496c89'}
+                barStyle: {backgroundColor: 'red'}
             }
         },
         Pokedex: {
@@ -53,9 +53,9 @@ const tabNavigator = createMaterialBottomTabNavigator(
             navigationOptions: {
                 tabBarLabel:'Pokedex',
                 tabBarIcon:({tintColor})=> (
-                    <Icon style={[{color: tintColor}]} size ={25} name ={'ios-settings'} />
+                    <Image style={{height:25, width:25}} source={require('../assets/pokedex.png')} />
                 ),
-                barStyle: {backgroundColor: '#496c89'}
+                barStyle: {backgroundColor: 'red'}
             }
         }
     },
