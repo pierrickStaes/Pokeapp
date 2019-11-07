@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native';
-//import { CITIES_INIT } from '../actions/CitiesAction'; (importer l'action)
+import { POKEMON_INIT } from '../actions/PokemonActions'; 
 
 
 const INITIAL_STATE = {

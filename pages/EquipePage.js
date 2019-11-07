@@ -74,7 +74,6 @@ class EquipePage extends React.Component{
         this.setState({refreshing:true})
         this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
             this.setState({LienPokimage: [resp.data.sprites.front_default]})
-            console.log(this.state.LienPokimage)
         })
         this.setState({refreshing:false})
     }
