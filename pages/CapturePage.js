@@ -43,6 +43,22 @@ class CapturePage extends React.Component{
           end = new Date().getTime();
        }
      }
+
+    comparePokemon(num){
+        if (this.props.pokedex!==null){
+            if ( this.props.pokedex.findIndex(e => e.id===num) == -1 ){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+
+    }
+
     findPokemon =()=> {
         //this.animate(this.state.animating);
         this.setState({pokemon: null})
@@ -77,8 +93,12 @@ class CapturePage extends React.Component{
                         this.setState({pokemon: resp.data})
 
                         
-
-                        this.props.actions.addPokedex({name : resp.data.name, height : resp.data.height, weight : resp.data.weight, id: resp.data.id, sprites: resp.data.sprites.front_default, type_name: resp.data.types})
+                        if (this.comparePokemon(resp.data.id)==true){
+                            this.props.actions.addPokedex({name : resp.data.name, height : resp.data.height, weight : resp.data.weight, id: resp.data.id, sprites: resp.data.sprites.front_default, type_name: resp.data.types})
+                        }
+                        else{
+                            alert('Pokémon déjà trouvé, allez plus loin !')
+                        }
                         console.log("pokedex"+this.props.pokedex)
                         console.log('test2')
 
