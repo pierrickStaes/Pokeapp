@@ -11,4 +11,4 @@ class PokemonService{
     }
 }
 
-export default PokemonService;
+export default PokemonService; 

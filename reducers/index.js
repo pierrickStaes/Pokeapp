@@ -1,11 +1,15 @@
 
 import {combineReducers} from 'redux';
-import weatherServiceReducer from './weatherServiceReducer';
+import PokemonServiceReducer from './PokemonServiceReducer';
+import EquipeFavReducer from './EquipeFavReducer';
+import PokedexReducer from './PokedexReducer';
 
 //import tes reducers
 
 const allReducers = combineReducers({
-    weatherService:weatherServiceReducer
+    pokemonService: PokemonServiceReducer,
+    pokemonFav: EquipeFavReducer,
+    pokedex: PokedexReducer
 });
 
 export default allReducers;

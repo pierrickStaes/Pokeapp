@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList, Button,TouchableOpacity,AsyncStorage, RefreshControl } from 'react-native';
+import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList, Text,TouchableOpacity,AsyncStorage, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { NavigationEvents } from 'react-navigation';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -60,31 +60,35 @@ class EquipePage extends React.Component{
     }*/
 
     state = {
-        LienPokimage: {
+        LienPokimage: null,
+        refreshing:true/*{
             pokemon1: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/196.png',
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/305.png',
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/500.png',
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/600.png']
-        }
+        }*/
+    }
+    onRefresh(){
+        this.setState({refreshing:true})
+        this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
+            this.setState({LienPokimage: [resp.data.sprites.front_default]})
+        })
+        this.setState({refreshing:false})
     }
 
-    pokeServ = new PokemonService();
-
     componentDidMount(){
-        /*this.pokeServ.getPokemonDataNom('espeon').then((resp) => {
-            console.log(resp.data.sprites.front_default)
-            this.setState({LienPokimage:resp.data.sprites.front_default})
-        })*/
+        this.onRefresh();
     }
       
     render(){
         return(
             <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                <NavigationEvents onDidFocus={() => this.onRefresh()} />
                 <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
                     <FlatList 
-                        data={this.state.LienPokimage.pokemon1}
+                        data={this.state.LienPokimage}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
                                 <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
@@ -121,10 +125,10 @@ const styles = StyleSheet.create({
     actions : {
         loadCities: bindActionCreators(init,payload)
     }
-});
+});*/
 
 const mapStateToProps = state => {
-    return { cities: state.citiesFav.cities };
-};*/
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe };
+};
 
-export default EquipePage;
+export default connect(mapStateToProps)(EquipePage);
