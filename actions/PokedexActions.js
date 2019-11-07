@@ -15,14 +15,14 @@ export const initPokedex = () => {
     };
 }
 
-export const addPokedex = () => {
+export const addPokedex = (dataPoke) => {
     return dispatch => {
         AsyncStorage.getItem('pokedex').then(data => {
             let tab = [];
             if (data !== null) {
                 tab = JSON.parse(data);
             }
-            tab.push(this.state.pokedex);
+            tab.push(dataPoke);
             AsyncStorage.setItem('pokedex', JSON.stringify(tab))
                 .then(() => {
                     return dispatch({ type: POKEDEX_INIT, payload: tab });

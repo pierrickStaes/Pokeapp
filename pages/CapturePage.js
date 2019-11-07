@@ -6,6 +6,8 @@ import TickToDate from '../components/TickToDate';
 import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import PokemonService from '../services/PokemonService';
+import { bindActionCreators } from 'redux';
+import { addPokedex } from '../actions/PokedexActions';
 
 PATTERN = [1000, 300, 100, 300, 1400, 300, 100, 300];
 
@@ -20,7 +22,7 @@ class CapturePage extends React.Component{
         hidden2: true,
     }
 
-    pokeService = new PokemonService()
+    //pokeService = new PokemonService()
 
     animate(bool){
         if (bool == true){
@@ -61,7 +63,7 @@ class CapturePage extends React.Component{
                 pokemonNum = this.findNumber(longitude,latitude);
                 
                 //alert(this.state.pokemon);    
-                this.pokeService.getPokemonDataNumero(pokemonNum).then((resp) =>{
+                this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp) =>{
                   //  this.setState({hidden2: true});
                  //   this.setState({hidden1: false});
                     setTimeout(()=>{
@@ -73,6 +75,11 @@ class CapturePage extends React.Component{
                     setTimeout(()=>{
                         this.setState({hidden: true});
                         this.setState({pokemon: resp.data})
+
+                        
+
+                        this.props.actions.addPokedex({name : resp.data.name, height : resp.data.height, weight : resp.data.weight, id: resp.data.id, sprites: resp.data.sprites.front_default, type_name: resp.data.types})
+                        console.log("pokedex"+this.props.pokedex)
                         console.log('test2')
 
                     }, 4500);
@@ -204,4 +211,14 @@ const mapStateToProps = state => {
 
 });    
 
-export default CapturePage;
+const mapStateToProps = state => {
+    return { pokemonServ: state.pokemonService.Pokeserv, pokedex : state.pokedex.pokedex};
+};
+
+const mapActionsToProps = (payload) => ({
+    actions: {
+        addPokedex: bindActionCreators(addPokedex, payload)
+    }
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(CapturePage);

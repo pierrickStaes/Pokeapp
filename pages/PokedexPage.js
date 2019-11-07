@@ -27,6 +27,8 @@ class PokedexPage extends React.Component{
             console.log(this.state.LienPokimage)
         })*/
         this.setState({refreshing:false})
+        //console.log("pokedex : " + this.props.pokedex[0].sprites)
+
     }
 
     componentDidMount(){
@@ -35,14 +37,15 @@ class PokedexPage extends React.Component{
 
     render(){
         return(
+            this.props.pokedex!==null?(
             <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <NavigationEvents onDidFocus={() => this.onRefresh()} />
                 <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
                     <FlatList 
-                        data={this.state.LienPokimage}
+                        data={this.props.pokedex}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
-                                <Image style={{width: width - 25, height: height - 40}} source={{uri: `${item}`}} resizeMode='stretch'/>
+                                <Image style={{width: width - 25, height: height - 40}} source={{uri: `${item.sprites}`}} resizeMode='stretch'/>
                             </View>
                         }
                         numColumns={4}
@@ -50,7 +53,9 @@ class PokedexPage extends React.Component{
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </ImageBackground>
-            </View>
+            </View>):(
+            <View></View>
+            )
         );
     }
 }
