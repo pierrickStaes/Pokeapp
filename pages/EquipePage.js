@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
 });*/
 
 const mapStateToProps = state => {
-    return { pokemonServ: state.pokemonService.Pokeserv };
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe };
 };
 
 export default connect(mapStateToProps)(EquipePage);

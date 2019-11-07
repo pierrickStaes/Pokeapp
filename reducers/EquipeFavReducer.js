@@ -7,9 +7,9 @@ const INITIAL_STATE = {
 };
 
 export default (state = INITIAL_STATE, action)=>{
-    /*switch(action.type){ (retourner les pokemons favoris)
-        case CITIES_INIT:
-            return { cities: action.payload }
-    }*/
+    switch(action.type){ //(retourner les pokemons favoris)
+        case POKEMON_INIT:
+            return { pokemonFav: action.payload }
+    }
     return state;
 }
