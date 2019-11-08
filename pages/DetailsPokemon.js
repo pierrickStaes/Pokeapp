@@ -11,9 +11,9 @@ class DetailsPokemon extends React.Component{
             couleur1: [],
             couleur2: [],
             couleur3: [],
-
-
+            fav: false
     };
+    
     convert = require('convert-units');
     gradient = require('../ressources/ColorGradientPoke/');
     
@@ -27,26 +27,18 @@ class DetailsPokemon extends React.Component{
              index.push(x);
          }
          poki = this.props.navigation.getParam('pokemon', [])
-         
-        console.log(this.gradient[index[poki.id-1]].colors[0].color.red)
-         
-
-        this.setState({
-            pokemon:poki,
-            couleur1:[this.gradient[index[poki.id-1]].colors[0].color.red,this.gradient[index[poki.id-1]].colors[0].color.green,this.gradient[index[poki.id-1]].colors[0].color.blue],
-            couleur2:[this.gradient[index[poki.id-1]].colors[1].color.red,this.gradient[index[poki.id-1]].colors[1].color.green,this.gradient[index[poki.id-1]].colors[1].color.blue],
-            couleur3:[this.gradient[index[poki.id-1]].colors[2].color.red,this.gradient[index[poki.id-1]].colors[2].color.green,this.gradient[index[poki.id-1]].colors[2].color.blue]
-        })
-
+        
         if (poki.id<=649){
             this.setState({
-                couleur1:[this.gradient[index[poki.id-1]].colors[0].color.red,this.gradient[index[poki.id-1]].colors[0].color.green,this.gradient[index[poki.id-1]].colors[0].color.blue],
-                couleur2:[this.gradient[index[poki.id-1]].colors[1].color.red,this.gradient[index[poki.id-1]].colors[1].color.green,this.gradient[index[poki.id-1]].colors[1].color.blue],
-                couleur3:[this.gradient[index[poki.id-1]].colors[2].color.red,this.gradient[index[poki.id-1]].colors[2].color.green,this.gradient[index[poki.id-1]].colors[2].color.blue]
+                pokemon:poki,
+                couleur1:[this.gradient[index[poki.id-1]].colors[0].color.red,this.gradient[index[poki.id-1]].colors[0].color.blue,this.gradient[index[poki.id-1]].colors[0].color.green],
+                couleur2:[this.gradient[index[poki.id-1]].colors[1].color.red,this.gradient[index[poki.id-1]].colors[1].color.blue,this.gradient[index[poki.id-1]].colors[1].color.green],
+                couleur3:[this.gradient[index[poki.id-1]].colors[2].color.red,this.gradient[index[poki.id-1]].colors[2].color.blue,this.gradient[index[poki.id-1]].colors[2].color.green]
             })
         }
         else{
             this.setState({
+                pokemon:poki,
                 couleur1:[255,255,255],
                 couleur2:[255,255,255],
                 couleur3:[255,255,255]
@@ -54,14 +46,43 @@ class DetailsPokemon extends React.Component{
         }
     }
 
+    estFavoris(){
+        if (this.state.fav == true) {
+            return require('../assets/starOk.png');
+        }
+        else
+        {
+            return require('../assets/starNonOk.png');
+        }
+    }
+
+    pressFavorites(){
+        if (this.state.fav == true) {
+            this.setState({
+                fav:false
+            })
+        }
+        else{
+            this.setState({
+                fav:true
+            })
+        }
+    }
       
     render(){
         return(
             this.state.pokemon !==null?(
             <View style={{flex:1, backgroundColor:'red'}}>
                 <LinearGradient colors={['rgb('+this.state.couleur1[0]+','+this.state.couleur1[1]+','+this.state.couleur1[2]+')','rgb('+this.state.couleur2[0]+','+this.state.couleur2[1]+','+this.state.couleur2[2]+')','rgb('+this.state.couleur3[0]+','+this.state.couleur3[1]+','+this.state.couleur3[2]+')']} style={{flex:1}}>
-                    <View style={{flex:1, alignItems:'flex-end',justifyContent:'center', marginTop:20, marginRight:10}}>
-                        <Button title="Fermer" onPress={() => this.onBack()} />
+                    <View style={{flex:1, alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                        <View style={{flex:1, alignItems:'flex-start',justifyContent:'center', marginTop:20, marginLeft:10}}>
+                            <TouchableOpacity onPress={() => this.pressFavorites()}>
+                                <Image style={{width: 40, height: 40}} source={this.estFavoris()} resizeMode='stretch'/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flex:1, alignItems:'flex-end',justifyContent:'center', marginTop:20, marginRight:10}}>
+                            <Button title="Fermer" onPress={() => this.onBack()} />
+                        </View>
                     </View>
                     <View style={{flex:10, alignItems:'center',justifyContent:'center'}}>
                         <View style={{flex:1, alignItems:'center',justifyContent:'center'}}>
