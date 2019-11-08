@@ -61,14 +61,13 @@ class CapturePage extends React.Component{
 
     findPokemon =()=> {
         //this.animate(this.state.animating);
-        this.setState({pokemon: null})
-        this.setState({hidden2: false});
-        Vibration.vibrate(PATTERN);
 
         navigator.geolocation.getCurrentPosition(
             position => {
               //  this.wait(3000);
-
+                this.setState({pokemon: null})
+                this.setState({hidden2: false});
+                Vibration.vibrate(PATTERN);
                 console.log("animate "+this.state.animating);
                 this.setState({position});                
                 console.log("longitude : "+this.state.position.coords.longitude);
@@ -79,7 +78,7 @@ class CapturePage extends React.Component{
                 pokemonNum = this.findNumber(longitude,latitude);
                 
                 //alert(this.state.pokemon);    
-                this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp) =>{
+                this.props.pokemonServ.getPokemonSpeciesDataNumero(pokemonNum).then((resp) =>{
                   //  this.setState({hidden2: true});
                  //   this.setState({hidden1: false});
                     setTimeout(()=>{
@@ -90,14 +89,46 @@ class CapturePage extends React.Component{
                     }, 4000);
                     setTimeout(()=>{
                         this.setState({hidden: true});
-                        this.setState({pokemon: resp.data})
-
-                        
+                        var nom = 'inconnu'
+                        for (let pokemon of resp.data.names) {
+                            if(pokemon.language.name == "fr"){
+                                nom = pokemon.name
+                            }
+                        }
                         if (this.comparePokemon(resp.data.id)==true){
-                            this.props.actions.addPokedex({name : resp.data.name, height : resp.data.height, weight : resp.data.weight, id: resp.data.id, sprites: resp.data.sprites.front_default, type_name: resp.data.types})
+                            var description = 'inconnu'
+                            var categorie = 'inconnu'
+                            for (let pokemon of resp.data.flavor_text_entries) {
+                                if(pokemon.language.name == "fr"){
+                                    description = pokemon.flavor_text
+                                }
+                            }
+                            for (let pokemon of resp.data.genera) {
+                                if(pokemon.language.name == "fr"){
+                                    categorie = pokemon.genus
+                                }
+                            }
+                            this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
+                                this.props.actions.addPokedex({name : nom, 
+                                    height : resp2.data.height, 
+                                    weight : resp2.data.weight, 
+                                    id: resp.data.id, 
+                                    sprites: resp2.data.sprites.front_default, 
+                                    type_name: resp.data.types,
+                                    description : description,
+                                    categorie: categorie})
+                                this.setState({
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default}
+                                })
+                            })
                         }
                         else{
-                            alert('Pokémon déjà trouvé, allez plus loin !')
+                            this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
+                                this.setState({
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default}
+                                })
+                            })
+                            alert(`${nom} déjà trouvé, allez plus loin !`)
                         }
                         console.log("pokedex"+this.props.pokedex)
                         console.log('test2')
@@ -171,7 +202,7 @@ class CapturePage extends React.Component{
                     <Text>Capture de Pokemon2</Text>
                     <Text>{this.state.pokemon.name}</Text>
 
-                    <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprites.front_default}` }}></Image>
+                    <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprite}` }}></Image>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
                         />

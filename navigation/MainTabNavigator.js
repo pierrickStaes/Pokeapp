@@ -5,26 +5,22 @@ import EquipePage from '../pages/EquipePage';
 import React from 'react';
 import {Image} from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack';
+import DetailsPokemon from '../pages/DetailsPokemon';
 
-/*const FavoritesNavigator = createStackNavigator(
+const DetailPokemonNavigator = createStackNavigator(
     {
-        FavoritesPage: {
-            screen: FavoritesPage
+        Pokedex: {
+            screen: PokedexPage
         },
-        AddFavorites:{
-            screen: AddFavoritesPage
+        Detail:{
+            screen: DetailsPokemon
         }
     },
     {
-        initialRouteName: 'FavoritesPage',
-        defaultNavigationOptions: {
-            headerStyle: {
-                backgroundColor: '#7cbac2',
-            },
-            headerTintColor: 'white'
-        }
+        initialRouteName: 'Pokedex',
+        headerMode:'none'
     }
-)*/
+)
 
 const tabNavigator = createMaterialBottomTabNavigator(
     {
@@ -49,7 +45,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
             }
         },
         Pokedex: {
-            screen : PokedexPage,
+            screen : DetailPokemonNavigator,
             navigationOptions: {
                 tabBarLabel:'Pokedex',
                 tabBarIcon:({tintColor})=> (

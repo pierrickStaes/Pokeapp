@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import { NavigationEvents } from 'react-navigation';
 import { bindActionCreators } from 'redux';
-import { initPokedex } from '../actions/PokedexActions';
 
 class PokedexPage extends React.Component{
 
@@ -21,18 +20,20 @@ class PokedexPage extends React.Component{
     }
     onRefresh(){
         this.setState({refreshing:true})
-        this.props.actions.initPokedex()
         /*this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
             this.setState({LienPokimage: [resp.data.sprites.front_default]})
             console.log(this.state.LienPokimage)
         })*/
         this.setState({refreshing:false})
-        //console.log("pokedex : " + this.props.pokedex[0].sprites)
-
     }
 
     componentDidMount(){
         this.onRefresh();
+    }
+
+    onPressPokemon(pokemonData) {
+        console.log("ok")
+        this.props.navigation.navigate('Detail',{pokemon:pokemonData})
     }
 
     render(){
@@ -45,11 +46,12 @@ class PokedexPage extends React.Component{
                         data={this.props.pokedex}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
+                                <TouchableOpacity onPress={() => this.onPressPokemon(item)}>
                                 <Image style={{width: width - 25, height: height - 40}} source={{uri: `${item.sprites}`}} resizeMode='stretch'/>
+                                </TouchableOpacity>
                             </View>
                         }
                         numColumns={4}
-                        ItemSeparatorComponent={this.renderSeparator}
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </ImageBackground>
@@ -82,11 +84,4 @@ const mapStateToProps = state => {
     return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe, pokedex: state.pokedex.pokedex };
 };
 
-const mapActionsToProps = (payload) => ({
-    actions: {
-        initPokedex: bindActionCreators(initPokedex, payload)
-    }
-});
-
-
-export default connect(mapStateToProps, mapActionsToProps)(PokedexPage);
+export default connect(mapStateToProps)(PokedexPage);

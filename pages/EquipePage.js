@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import CityFavoris from '../components/CityFavoris';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PokemonService from '../services/PokemonService';
+import { initPokedex } from '../actions/PokedexActions';
 
 class EquipePage extends React.Component{
 
@@ -23,6 +23,7 @@ class EquipePage extends React.Component{
     }
     onRefresh(){
         this.setState({refreshing:true})
+        this.props.actions.initPokedex()
         /*this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
             this.setState({LienPokimage: [resp.data.sprites.front_default]})
         })*/
@@ -72,14 +73,14 @@ const styles = StyleSheet.create({
     }
 })
 
-/*const mapActionsToProps = (payload) => ({
-    actions : {
-        loadCities: bindActionCreators(init,payload)
+const mapActionsToProps = (payload) => ({
+    actions: {
+        initPokedex: bindActionCreators(initPokedex, payload)
     }
-});*/
+});
 
 const mapStateToProps = state => {
     return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe };
 };
 
-export default connect(mapStateToProps)(EquipePage);
+export default connect(mapStateToProps,mapActionsToProps)(EquipePage);
