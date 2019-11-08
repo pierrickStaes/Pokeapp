@@ -7,24 +7,59 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 class DetailsPokemon extends React.Component{
 
-    state = {pokemon: null};
-    convert = require('convert-units')
+    state = {pokemon: null,
+            couleur1: [],
+            couleur2: [],
+            couleur3: [],
+
+
+    };
+    convert = require('convert-units');
+    gradient = require('../ressources/ColorGradientPoke/');
     
     onBack() {
         this.props.navigation.goBack();
     }
 
     componentDidMount(){
+        var index = [];
+         for (var x in this.gradient){
+             index.push(x);
+         }
+         poki = this.props.navigation.getParam('pokemon', [])
+         
+        console.log(this.gradient[index[poki.id-1]].colors[0].color.red)
+         
+
         this.setState({
-            pokemon:this.props.navigation.getParam('pokemon', [])
+            pokemon:poki,
+            couleur1:[this.gradient[index[poki.id-1]].colors[0].color.red,this.gradient[index[poki.id-1]].colors[0].color.green,this.gradient[index[poki.id-1]].colors[0].color.blue],
+            couleur2:[this.gradient[index[poki.id-1]].colors[1].color.red,this.gradient[index[poki.id-1]].colors[1].color.green,this.gradient[index[poki.id-1]].colors[1].color.blue],
+            couleur3:[this.gradient[index[poki.id-1]].colors[2].color.red,this.gradient[index[poki.id-1]].colors[2].color.green,this.gradient[index[poki.id-1]].colors[2].color.blue]
         })
+
+        if (poki.id<=649){
+            this.setState({
+                couleur1:[this.gradient[index[poki.id-1]].colors[0].color.red,this.gradient[index[poki.id-1]].colors[0].color.green,this.gradient[index[poki.id-1]].colors[0].color.blue],
+                couleur2:[this.gradient[index[poki.id-1]].colors[1].color.red,this.gradient[index[poki.id-1]].colors[1].color.green,this.gradient[index[poki.id-1]].colors[1].color.blue],
+                couleur3:[this.gradient[index[poki.id-1]].colors[2].color.red,this.gradient[index[poki.id-1]].colors[2].color.green,this.gradient[index[poki.id-1]].colors[2].color.blue]
+            })
+        }
+        else{
+            this.setState({
+                couleur1:[255,255,255],
+                couleur2:[255,255,255],
+                couleur3:[255,255,255]
+            })
+        }
     }
+
       
     render(){
         return(
             this.state.pokemon !==null?(
             <View style={{flex:1, backgroundColor:'red'}}>
-                <LinearGradient colors={['#debd41','#b49420']} style={{flex:1}}>
+                <LinearGradient colors={['rgb('+this.state.couleur1[0]+','+this.state.couleur1[1]+','+this.state.couleur1[2]+')','rgb('+this.state.couleur2[0]+','+this.state.couleur2[1]+','+this.state.couleur2[2]+')','rgb('+this.state.couleur3[0]+','+this.state.couleur3[1]+','+this.state.couleur3[2]+')']} style={{flex:1}}>
                     <View style={{flex:1, alignItems:'flex-end',justifyContent:'center', marginTop:20, marginRight:10}}>
                         <Button title="Fermer" onPress={() => this.onBack()} />
                     </View>

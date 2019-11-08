@@ -21,6 +21,7 @@ class CapturePage extends React.Component{
         hidden: true,
         hidden2: true,
     }
+    
 
     //pokeService = new PokemonService()
 
