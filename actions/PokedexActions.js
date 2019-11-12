@@ -23,6 +23,9 @@ export const addPokedex = (dataPoke) => {
                 tab = JSON.parse(data);
             }
             tab.push(dataPoke);
+            tab.sort(function(a,b){
+                return a.id - b.id;
+            })
             AsyncStorage.setItem('pokedex', JSON.stringify(tab))
                 .then(() => {
                     return dispatch({ type: POKEDEX_INIT, payload: tab });

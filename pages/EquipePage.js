@@ -7,6 +7,7 @@ import CityFavoris from '../components/CityFavoris';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { initPokedex } from '../actions/PokedexActions';
+import { initFav } from '../actions/PokemonActions';
 
 class EquipePage extends React.Component{
 
@@ -24,6 +25,7 @@ class EquipePage extends React.Component{
     onRefresh(){
         this.setState({refreshing:true})
         this.props.actions.initPokedex()
+        this.props.actions.initFav()
         /*this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
             this.setState({LienPokimage: [resp.data.sprites.front_default]})
         })*/
@@ -40,7 +42,7 @@ class EquipePage extends React.Component{
                 <NavigationEvents onDidFocus={() => this.onRefresh()} />
                 <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
                     <FlatList 
-                        data={this.state.LienPokimage}
+                        data={this.props.pokemonFav}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
                                 <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
@@ -75,12 +77,13 @@ const styles = StyleSheet.create({
 
 const mapActionsToProps = (payload) => ({
     actions: {
-        initPokedex: bindActionCreators(initPokedex, payload)
+        initPokedex: bindActionCreators(initPokedex, payload),
+        initFav: bindActionCreators(initFav,payload)
     }
 });
 
 const mapStateToProps = state => {
-    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe };
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonFav };
 };
 
 export default connect(mapStateToProps,mapActionsToProps)(EquipePage);

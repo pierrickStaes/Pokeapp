@@ -4,6 +4,9 @@ import { ListItem } from 'react-native-elements';
 import Loading from '../components/Loading';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
+import { deleteFav, addFav, deleteAllFav } from '../actions/PokemonActions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class DetailsPokemon extends React.Component{
 
@@ -46,8 +49,23 @@ class DetailsPokemon extends React.Component{
         }
     }
 
+    compareFav(){
+        if (this.props.pokemonFav!==null){
+            if ( this.props.pokemonFav.findIndex(e => e===this.state.pokemon.sprites) == -1 ){
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return false;
+        }
+
+    }
+
     estFavoris(){
-        if (this.state.fav == true) {
+        if (this.compareFav()) {
             return require('../assets/starOk.png');
         }
         else
@@ -57,15 +75,16 @@ class DetailsPokemon extends React.Component{
     }
 
     pressFavorites(){
-        if (this.state.fav == true) {
-            this.setState({
-                fav:false
-            })
+        if (this.compareFav()) {
+            this.props.actions.deleteFav(this.state.pokemon.sprites)
         }
         else{
-            this.setState({
-                fav:true
-            })
+            if(this.props.pokemonFav.length<6){
+                this.props.actions.addFav(this.state.pokemon.sprites)
+            }
+            else{
+                alert('Vous ne pouvez avoir que 6 Pokémons en favoris !')
+            }
         }
     }
       
@@ -122,4 +141,16 @@ class DetailsPokemon extends React.Component{
     }
 }
 
-export default DetailsPokemon;
+const mapStateToProps = state => {
+    return { pokemonFav: state.pokemonFav.pokemonFav };
+};
+
+const mapActionsToProps = (payload) => ({
+    actions: {
+        addFav: bindActionCreators(addFav, payload),
+        deleteFav:bindActionCreators(deleteFav,payload),
+        deleteAllFav:bindActionCreators(deleteAllFav,payload)
+    }
+});
+
+export default connect(mapStateToProps,mapActionsToProps)(DetailsPokemon);

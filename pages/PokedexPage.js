@@ -4,26 +4,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import { NavigationEvents } from 'react-navigation';
 import { bindActionCreators } from 'redux';
+import { initPokedex } from '../actions/PokedexActions';
 
 class PokedexPage extends React.Component{
 
     state = {
         LienPokimage: [],
-        refreshing:true/*{
-            pokemon1: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/196.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/305.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/500.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png']
-        }*/
+        refreshing:true
     }
     onRefresh(){
         this.setState({refreshing:true})
-        /*this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
-            this.setState({LienPokimage: [resp.data.sprites.front_default]})
-            console.log(this.state.LienPokimage)
-        })*/
+        this.props.actions.initPokedex()
         this.setState({refreshing:false})
     }
 
@@ -32,8 +23,31 @@ class PokedexPage extends React.Component{
     }
 
     onPressPokemon(pokemonData) {
-        console.log("ok")
         this.props.navigation.navigate('Detail',{pokemon:pokemonData})
+    }
+
+    compareFav(sprites){
+        if (this.props.pokemonFav!==null){
+            if ( this.props.pokemonFav.findIndex(e => e===sprites) == -1 ){
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    estFavoris(sprites){
+        if (this.compareFav(sprites)) {
+            return require('../assets/starOk.png');
+        }
+        else
+        {
+            return null;
+        }
     }
 
     render(){
@@ -47,7 +61,9 @@ class PokedexPage extends React.Component{
                         renderItem={({ item }) => 
                             <View style={styles.card}>
                                 <TouchableOpacity onPress={() => this.onPressPokemon(item)}>
-                                <Image style={{width: width - 25, height: height - 40}} source={{uri: `${item.sprites}`}} resizeMode='stretch'/>
+                                <ImageBackground style={{width: width - 25, height: height - 40}} source={{uri: `${item.sprites}`}} resizeMode='stretch'>
+                                    <Image style={{width: 15, height: 15}} source={this.estFavoris(item.sprites)} resizeMode='stretch'/>
+                                </ImageBackground>
                                 </TouchableOpacity>
                             </View>
                         }
@@ -81,7 +97,13 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => {
-    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe, pokedex: state.pokedex.pokedex };
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonFav, pokedex: state.pokedex.pokedex };
 };
 
-export default connect(mapStateToProps)(PokedexPage);
+const mapActionsToProps = (payload) => ({
+    actions: {
+        initPokedex: bindActionCreators(initPokedex, payload)
+    }
+});
+
+export default connect(mapStateToProps,mapActionsToProps)(PokedexPage);

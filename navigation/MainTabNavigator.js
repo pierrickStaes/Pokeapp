@@ -57,8 +57,8 @@ const tabNavigator = createMaterialBottomTabNavigator(
     },
     {
         initialRouteName: 'Equipe',
-        activeColor:'#7cbac2',
-        inactiveColor:'#3684c5',
+        activeColor:'white',
+        inactiveColor:'#7cbac2',
         labelStyle: {textAlign: 'center'}
     }
 );
