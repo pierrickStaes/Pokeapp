@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, StatusBar, Alert, TouchableHighlight, ActivityIndicator, Vibration } from 'react-native';
+import { StyleSheet, Text, View, Image, StatusBar, Alert, TouchableHighlight, ActivityIndicator, Vibration, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Loading from '../components/Loading';
 import TickToDate from '../components/TickToDate';
 import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import PokemonService from '../services/PokemonService';
+import { bindActionCreators } from 'redux';
+import { addPokedex } from '../actions/PokedexActions';
 
 PATTERN = [1000, 300, 100, 300, 1400, 300, 100, 300];
 
@@ -18,13 +20,16 @@ class CapturePage extends React.Component{
         animating: false,
         hidden: true,
         hidden2: true,
+        second:10,
+        timerprogress:false,
+        disabled:false,
     }
+    
 
-    pokeService = new PokemonService()
+    //pokeService = new PokemonService()
 
     animate(bool){
         if (bool == true){
-            this.setState({animating: false});
             this.setState({animating: false});
             console.log("animate "+this.state.animating);
         }
@@ -41,16 +46,36 @@ class CapturePage extends React.Component{
           end = new Date().getTime();
        }
      }
-    findPokemon =()=> {
-        //this.animate(this.state.animating);
-        this.setState({pokemon: null})
-        this.setState({hidden2: false});
-        Vibration.vibrate(PATTERN);
 
+    comparePokemon(num){
+        if (this.props.pokedex!==null){
+            if ( this.props.pokedex.findIndex(e => e.id===num) == -1 ){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+
+    }
+
+    findPokemon =()=> {
+        this.setState({disabled: true})
+        //this.animate(this.state.animating);
+        if (this.state.timerprogress!== true){
+        
+        
         navigator.geolocation.getCurrentPosition(
             position => {
               //  this.wait(3000);
-
+              
+                this.setState({pokemon: null})
+                this.setState({hidden2: false});
+                Vibration.vibrate(PATTERN, true);
+                this.Start();
                 console.log("animate "+this.state.animating);
                 this.setState({position});                
                 console.log("longitude : "+this.state.position.coords.longitude);
@@ -61,7 +86,7 @@ class CapturePage extends React.Component{
                 pokemonNum = this.findNumber(longitude,latitude);
                 
                 //alert(this.state.pokemon);    
-                this.pokeService.getPokemonDataNumero(pokemonNum).then((resp) =>{
+                this.props.pokemonServ.getPokemonSpeciesDataNumero(pokemonNum).then((resp) =>{
                   //  this.setState({hidden2: true});
                  //   this.setState({hidden1: false});
                     setTimeout(()=>{
@@ -72,7 +97,53 @@ class CapturePage extends React.Component{
                     }, 4000);
                     setTimeout(()=>{
                         this.setState({hidden: true});
-                        this.setState({pokemon: resp.data})
+                        var nom = 'inconnu'
+                        for (let pokemon of resp.data.names) {
+                            if(pokemon.language.name == "fr"){
+                                nom = pokemon.name
+                            }
+                        }
+                        if (this.comparePokemon(resp.data.id)==true){
+                            var description = 'inconnu'
+                            var categorie = 'inconnu'
+                            for (let pokemon of resp.data.flavor_text_entries) {
+                                if(pokemon.language.name == "fr"){
+                                    description = pokemon.flavor_text
+                                }
+                            }
+                            for (let pokemon of resp.data.genera) {
+                                if(pokemon.language.name == "fr"){
+                                    categorie = pokemon.genus
+                                }
+                            }
+                            this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
+                                this.props.actions.addPokedex({name : nom, 
+                                    height : resp2.data.height, 
+                                    weight : resp2.data.weight, 
+                                    id: resp.data.id, 
+                                    sprites: resp2.data.sprites.front_default, 
+                                    type_name: resp2.data.types,
+                                    description : description,
+                                    categorie: categorie})
+                                this.setState({
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default, id: resp.data.id}
+                                })
+                                Vibration.cancel();
+
+                            })
+                        }
+
+                        else{
+                            this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
+                                this.setState({
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default, id: resp.data.id}
+                                })
+                            })
+                            alert(`${nom} déjà trouvé, allez plus loin !`)
+                            this.setState({disabled: false})
+                            Vibration.cancel();
+                        }
+                        console.log("pokedex"+this.props.pokedex)
                         console.log('test2')
 
                     }, 4500);
@@ -83,13 +154,23 @@ class CapturePage extends React.Component{
 
                 });
             },
-            error => Alert.alert(error.message),
+            error => this.catchError(),
             {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
         )
+        }else {
+            alert('Il vous reste encore '+this.state.second+ 'secondes avant une nouvelle capture !');
+            this.setState({disabled: false})
+        }
     }
 
 
-    
+    catchError(){
+        alert("Problème de connexion veuillez relancer.");
+        Vibration.cancel();
+        this.setState({hidden2: true});
+        this.Reset();
+        this.setState({disabled: false})
+    }
 
     findNumber(long,lat){
 
@@ -113,9 +194,28 @@ class CapturePage extends React.Component{
         return number;
     }
 
+    _interval= null;
 
+    Start = () => {
+        this._interval = setInterval(()=>{
+            this.setState({
+                second: this.state.second-1,
+                timerprogress: true
+            })
+            this.Reset();
+        },1000);
+    }
 
-
+    Reset = () => {
+        if(this.state.second==0){
+            this.setState({
+                second:10
+            })
+            clearInterval(this._interval);
+            this.setState({timerprogress: false})
+            this.setState({disabled: false})
+        }
+    }
 /*
     //Nouvelle version qui marchait sur mon binome mais pas dans mon code (pas d'erreur juste ça marche pas)
     findCoordinates = () => {
@@ -140,25 +240,27 @@ class CapturePage extends React.Component{
     render(){
         return(
             this.state.position !== null && this.state.pokemon !==null?(
-                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <Text>Capture de Pokemon2</Text>
-                    <Text>{this.state.pokemon.name}</Text>
-
-                    <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprites.front_default}` }}></Image>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center', backgroundColor: '#BBF4FA'}}>
+                    <Text style={{fontSize:38}}>Capture de Pokemon</Text>
+                    <Text style={{fontSize:22}}>{this.state.pokemon.name}</Text>
+                    <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprite}` }}></Image>
+                    <Text style={{fontSize:22}}>#{this.state.pokemon.id}</Text>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
                         />
                     <Image style={this.state.hidden2== true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/test.gif')}
                         />
-                    <TouchableHighlight  onPress={this.findPokemon}>
+                    <TouchableWithoutFeedback  onPress={this.findPokemon} disabled ={this.state.disabled}>
                         <Image style={{width:100, height: 100}}
                             source={require('../assets/capture.png')}
                         />
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
+                    <Text>{this.state.second}</Text>
+
                 </View>):(
-                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <Text>Capture de Pokemon1</Text>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center', backgroundColor: '#D6D6D6'}}>
+                    <Text style={{fontSize:30}}>Capture de Pokemon</Text>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
                         />
@@ -168,11 +270,12 @@ class CapturePage extends React.Component{
                     <View>
 
                     </View>
-                    <TouchableHighlight  onPress={this.findPokemon}>
+                    <TouchableWithoutFeedback  onPress={this.findPokemon} disabled ={this.state.disabled}>
                         <Image style={{width:100, height: 100}}
                             source={require('../assets/capture.png')}
                         />
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
+                    <Text>{this.state.second}</Text>
                 </View>
 
             )
@@ -204,4 +307,14 @@ const mapStateToProps = state => {
 
 });    
 
-export default CapturePage;
+const mapStateToProps = state => {
+    return { pokemonServ: state.pokemonService.Pokeserv, pokedex : state.pokedex.pokedex};
+};
+
+const mapActionsToProps = (payload) => ({
+    actions: {
+        addPokedex: bindActionCreators(addPokedex, payload)
+    }
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(CapturePage);

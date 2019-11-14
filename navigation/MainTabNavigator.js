@@ -5,26 +5,22 @@ import EquipePage from '../pages/EquipePage';
 import React from 'react';
 import {Image} from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack';
+import DetailsPokemon from '../pages/DetailsPokemon';
 
-/*const FavoritesNavigator = createStackNavigator(
+const DetailPokemonNavigator = createStackNavigator(
     {
-        FavoritesPage: {
-            screen: FavoritesPage
+        Pokedex: {
+            screen: PokedexPage
         },
-        AddFavorites:{
-            screen: AddFavoritesPage
+        Detail:{
+            screen: DetailsPokemon
         }
     },
     {
-        initialRouteName: 'FavoritesPage',
-        defaultNavigationOptions: {
-            headerStyle: {
-                backgroundColor: '#7cbac2',
-            },
-            headerTintColor: 'white'
-        }
+        initialRouteName: 'Pokedex',
+        headerMode:'none'
     }
-)*/
+)
 
 const tabNavigator = createMaterialBottomTabNavigator(
     {
@@ -35,7 +31,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/equipe.png')} />
                 ),
-                barStyle: {backgroundColor: '#bd0c27'}
+                barStyle: {backgroundColor: '#bc270d'}
             }
         },
         Capture: {
@@ -45,24 +41,24 @@ const tabNavigator = createMaterialBottomTabNavigator(
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/capture.png')} />
                 ),
-                barStyle: {backgroundColor: '#bd0c27'}
+                barStyle: {backgroundColor: '#bc270d'}
             }
         },
         Pokedex: {
-            screen : PokedexPage,
+            screen : DetailPokemonNavigator,
             navigationOptions: {
                 tabBarLabel:'Pokedex',
                 tabBarIcon:({tintColor})=> (
                     <Image style={{height:25, width:25}} source={require('../assets/pokedex.png')} />
                 ),
-                barStyle: {backgroundColor: '#bd0c27'}
+                barStyle: {backgroundColor: '#bc270d'}
             }
         }
     },
     {
         initialRouteName: 'Equipe',
-        activeColor:'#7cbac2',
-        inactiveColor:'#3684c5',
+        activeColor:'white',
+        inactiveColor:'#7cbac2',
         labelStyle: {textAlign: 'center'}
     }
 );

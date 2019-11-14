@@ -1,94 +1,40 @@
 import React from 'react';
-import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList, Text,TouchableOpacity,AsyncStorage, RefreshControl } from 'react-native';
+import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList, Text,StatusBar,AsyncStorage, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { NavigationEvents } from 'react-navigation';
 import { LinearGradient } from 'expo-linear-gradient';
 import CityFavoris from '../components/CityFavoris';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PokemonService from '../services/PokemonService';
+import { initPokedex } from '../actions/PokedexActions';
+import { initFav } from '../actions/PokemonActions';
+import Swiper from 'react-native-swiper';
 
 class EquipePage extends React.Component{
 
-    /*static navigationOptions = ({navigation}) => {
-        return {
-            title: 'Favoris',
-            headerRight: (
-                <Icon style={{marginTop:8, marginRight:20}} name="plus-circle" 
-                    size={30} color="white" onPress={() => FavoritesPage.onPressFav(navigation)}/>
-            )
-        }
-    };
-
-    static onPressFav(navigation) {
-        if (FavoritesPage.count < 15){
-            navigation.push('AddFavorites')
-        }
-        else{
-            alert("Vous ne pouvez pas avoir plus de 15 villes favorites")
-        }
-    }
-
-    static  count = 0 
-
-    state = { cities: [], refreshing: true }
-
-    onRefresh(){
-        this.setState({refreshing:true})
-        this.props.actions.loadCities();
-        this.setState({refreshing:false})
-}
-
-    deleteCity(cityname){
-        let tab = [...this.state.cities];
-        tab.splice(tab.findIndex(e => e.name === cityname), 1);
-        AsyncStorage.setItem('city', JSON.stringify(tab)).then(()=>{
-            this.setState({cities: tab})
-        })
-        FavoritesPage.count -= 1;
-    }
-
-    suppFav(){
-        AsyncStorage.removeItem('city').then(() => {
-            this.setState({
-                cities : []
-            })
-            this.onRefresh();
-            FavoritesPage.count = 0;
-        });
-
-    }*/
-
     state = {
         LienPokimage: null,
-        refreshing:true/*{
-            pokemon1: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/196.png',
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/305.png',
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/500.png',
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/600.png']
-        }*/
+        refreshing:true
     }
     onRefresh(){
         this.setState({refreshing:true})
-        this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
-            this.setState({LienPokimage: [resp.data.sprites.front_default]})
-        })
+        this.props.actions.initPokedex()
+        this.props.actions.initFav()
         this.setState({refreshing:false})
     }
 
     componentDidMount(){
+        StatusBar.setHidden(true);
         this.onRefresh();
     }
       
     render(){
         return(
-            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                <NavigationEvents onDidFocus={() => this.onRefresh()} />
-                <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
-                    <FlatList 
-                        data={this.state.LienPokimage}
+            <Swiper>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
+                        <FlatList 
+                        data={this.props.pokemonFav}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
                                 <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
@@ -97,9 +43,55 @@ class EquipePage extends React.Component{
                         numColumns={2}
                         ItemSeparatorComponent={this.renderSeparator}
                         keyExtractor={(item, index) => index.toString()}
-                    />
-                </ImageBackground>
-            </View>
+                        />
+                    </ImageBackground>
+                </View>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ImageBackground source={require('../assets/plage.png')} style={{width: '100%', height: '100%'}}>
+                        <FlatList 
+                        data={this.props.pokemonFav}
+                        renderItem={({ item }) => 
+                            <View style={styles.card}>
+                                <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
+                            </View>
+                        }
+                        numColumns={2}
+                        ItemSeparatorComponent={this.renderSeparator}
+                        keyExtractor={(item, index) => index.toString()}
+                        />
+                    </ImageBackground>
+                </View>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ImageBackground source={require('../assets/mountain.png')} style={{width: '100%', height: '100%'}}>
+                        <FlatList 
+                        data={this.props.pokemonFav}
+                        renderItem={({ item }) => 
+                            <View style={styles.card}>
+                                <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
+                            </View>
+                        }
+                        numColumns={2}
+                        ItemSeparatorComponent={this.renderSeparator}
+                        keyExtractor={(item, index) => index.toString()}
+                        />
+                    </ImageBackground>
+                </View>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ImageBackground source={require('../assets/ruines.png')} style={{width: '100%', height: '100%'}}>
+                        <FlatList 
+                        data={this.props.pokemonFav}
+                        renderItem={({ item }) => 
+                            <View style={styles.card}>
+                                <Image style={{width: 150, height: 150}} source={{uri: `${item}`}}/>
+                            </View>
+                        }
+                        numColumns={2}
+                        ItemSeparatorComponent={this.renderSeparator}
+                        keyExtractor={(item, index) => index.toString()}
+                        />
+                    </ImageBackground>
+                </View>
+            </Swiper>
         );
     }
 }
@@ -121,14 +113,15 @@ const styles = StyleSheet.create({
     }
 })
 
-/*const mapActionsToProps = (payload) => ({
-    actions : {
-        loadCities: bindActionCreators(init,payload)
+const mapActionsToProps = (payload) => ({
+    actions: {
+        initPokedex: bindActionCreators(initPokedex, payload),
+        initFav: bindActionCreators(initFav,payload)
     }
-});*/
+});
 
 const mapStateToProps = state => {
-    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe };
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonFav };
 };
 
-export default connect(mapStateToProps)(EquipePage);
+export default connect(mapStateToProps,mapActionsToProps)(EquipePage);

@@ -10,22 +10,11 @@ class PokedexPage extends React.Component{
 
     state = {
         LienPokimage: [],
-        refreshing:true/*{
-            pokemon1: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/196.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/305.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/500.png',
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png']
-        }*/
+        refreshing:true
     }
     onRefresh(){
         this.setState({refreshing:true})
         this.props.actions.initPokedex()
-        /*this.props.pokemonServ.getPokemonDataNom('espeon').then((resp) => {
-            this.setState({LienPokimage: [resp.data.sprites.front_default]})
-            console.log(this.state.LienPokimage)
-        })*/
         this.setState({refreshing:false})
     }
 
@@ -33,24 +22,60 @@ class PokedexPage extends React.Component{
         this.onRefresh();
     }
 
+    onPressPokemon(pokemonData) {
+        this.props.navigation.navigate('Detail',{pokemon:pokemonData})
+    }
+
+    compareFav(sprites){
+        if (this.props.pokemonFav!==null){
+            if ( this.props.pokemonFav.findIndex(e => e===sprites) == -1 ){
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    estFavoris(sprites){
+        if (this.compareFav(sprites)) {
+            return require('../assets/starOk.png');
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     render(){
         return(
+            this.props.pokedex!==null?(
             <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <NavigationEvents onDidFocus={() => this.onRefresh()} />
-                <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
+                <LinearGradient colors={['#019ed8','#007ba8']} style={{width:'100%', height:'100%'}}>
+                
                     <FlatList 
-                        data={this.state.LienPokimage}
+                        data={this.props.pokedex}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
-                                <Image style={{width: width - 25, height: height - 40}} source={{uri: `${item}`}} resizeMode='stretch'/>
+                                <TouchableOpacity onPress={() => this.onPressPokemon(item)}>
+                                <ImageBackground style={{width: width - 25, height: height - 40, backgroundColor:'#01a2d8'}} source={{uri: `${item.sprites}`}} resizeMode='stretch'>
+                                    <Image style={{width: 15, height: 15}} source={this.estFavoris(item.sprites)} resizeMode='stretch'/>
+                                    <Text style={{position: "absolute",bottom:0,right:0}}>#{item.id}</Text>
+                                </ImageBackground>
+                                </TouchableOpacity>
                             </View>
                         }
                         numColumns={4}
-                        ItemSeparatorComponent={this.renderSeparator}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                </ImageBackground>
-            </View>
+                </LinearGradient>
+            </View>):(
+            <View></View>
+            )
         );
     }
 }
@@ -74,7 +99,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => {
-    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonEquipe, pokedex: state.pokedex.pokedex };
+    return { pokemonServ: state.pokemonService.Pokeserv, pokemonFav: state.pokemonFav.pokemonFav, pokedex: state.pokedex.pokedex };
 };
 
 const mapActionsToProps = (payload) => ({
@@ -83,5 +108,4 @@ const mapActionsToProps = (payload) => ({
     }
 });
 
-
-export default connect(mapStateToProps, mapActionsToProps)(PokedexPage);
+export default connect(mapStateToProps,mapActionsToProps)(PokedexPage);
