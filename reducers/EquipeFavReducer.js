@@ -1,4 +1,3 @@
-import { AsyncStorage } from 'react-native';
 import { POKEMON_FAV_INIT } from '../actions/PokemonActions'; 
 
 

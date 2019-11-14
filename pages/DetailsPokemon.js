@@ -1,8 +1,5 @@
 import React from 'react';
-import { ImageBackground, Text, View, Image, FlatList, Button,TouchableOpacity,AsyncStorage } from 'react-native';
-import { ListItem } from 'react-native-elements';
-import Loading from '../components/Loading';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, View, Image, Button,TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { deleteFav, addFav, deleteAllFav } from '../actions/PokemonActions';
 import { connect } from 'react-redux';

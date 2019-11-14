@@ -1,9 +1,5 @@
 import React from 'react';
-import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList, Text,StatusBar,AsyncStorage, RefreshControl } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { NavigationEvents } from 'react-navigation';
-import { LinearGradient } from 'expo-linear-gradient';
-import CityFavoris from '../components/CityFavoris';
+import { StyleSheet, ImageBackground , View, Image, Dimensions, FlatList,StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { initPokedex } from '../actions/PokedexActions';

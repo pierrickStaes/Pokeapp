@@ -74,7 +74,11 @@ class PokedexPage extends React.Component{
                     />
                 </LinearGradient>
             </View>):(
-            <View></View>
+            <View>
+                <LinearGradient colors={['#019ed8','#007ba8']} style={{width:'100%', height:'100%'}}>
+                    <Text>Vous n'avez encore attrapé aucun Pokemon</Text>
+                </LinearGradient>
+            </View>
             )
         );
     }
