@@ -1,11 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, StatusBar, Alert, TouchableHighlight, ActivityIndicator, Vibration, TouchableWithoutFeedback } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Loading from '../components/Loading';
-import TickToDate from '../components/TickToDate';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, Image, Vibration, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
-import PokemonService from '../services/PokemonService';
 import { bindActionCreators } from 'redux';
 import { addPokedex } from '../actions/PokedexActions';
 
