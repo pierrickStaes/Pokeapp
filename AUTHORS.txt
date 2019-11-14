@@ -1,0 +1,3 @@
+Yohan GIRARD : Gestion de la géolocalisation et le stockage des données reçus
+Julien LAPA : Gestion des components natifs
+Pierrick STAES : Gestion de l'affichage des données reçus et de la sélection de favoris
