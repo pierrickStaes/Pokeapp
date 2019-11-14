@@ -131,7 +131,7 @@ class CapturePage extends React.Component{
                         else{
                             this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
                                 this.setState({
-                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default}
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default, id: resp.data.id}
                                 })
                             })
                             alert(`${nom} déjà trouvé, allez plus loin !`)
@@ -235,7 +235,7 @@ class CapturePage extends React.Component{
     render(){
         return(
             this.state.position !== null && this.state.pokemon !==null?(
-                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center', backgroundColor: '#BBF4FA'}}>
                     <Text style={{fontSize:38}}>Capture de Pokemon</Text>
                     <Text style={{fontSize:22}}>{this.state.pokemon.name}</Text>
                     <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprite}` }}></Image>
@@ -254,7 +254,7 @@ class CapturePage extends React.Component{
                     <Text>{this.state.second}</Text>
 
                 </View>):(
-                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center', backgroundColor: '#D6D6D6'}}>
                     <Text style={{fontSize:30}}>Capture de Pokemon</Text>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
