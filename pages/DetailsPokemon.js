@@ -14,7 +14,8 @@ class DetailsPokemon extends React.Component{
             couleur1: [],
             couleur2: [],
             couleur3: [],
-            fav: false
+            fav: false,
+            type2: false
     };
     
     convert = require('convert-units');
@@ -22,6 +23,49 @@ class DetailsPokemon extends React.Component{
     
     onBack() {
         this.props.navigation.goBack();
+    }
+
+    getType(name){
+        switch(name){
+            case 'bug':
+                return require('../assets/bug.png');
+            case 'dark':
+                return require('../assets/dark.png');
+            case 'dragon':
+                return require('../assets/dragon.png');
+            case 'electric':
+                return require('../assets/electric.png');
+            case 'fairy':
+                return require('../assets/fairy.png');
+            case 'fighting':
+                return require('../assets/fighting.png');
+            case 'fire':
+                return require('../assets/fire.png');
+            case 'flying':
+                return require('../assets/flying.png');
+            case 'ghost':
+                return require('../assets/ghost.png');
+            case 'grass':
+                return require('../assets/grass.png');
+            case 'ground':
+                return require('../assets/ground.png');
+            case 'ice':
+                return require('../assets/ice.png');
+            case 'normal':
+                return require('../assets/normal.png');
+            case 'poison':
+                return require('../assets/poison.png');
+            case 'psychic':
+                return require('../assets/psychic.png');
+            case 'rock':
+                return require('../assets/rock.png');
+            case 'steel':
+                return require('../assets/steel.png');
+            case 'water':
+                return require('../assets/water.png');
+            default :
+                return null
+        }
     }
 
     componentDidMount(){
@@ -45,6 +89,16 @@ class DetailsPokemon extends React.Component{
                 couleur1:[255,255,255],
                 couleur2:[255,255,255],
                 couleur3:[255,255,255]
+            })
+        }
+        if(poki.type_name.length<2){
+            this.setState({
+                type2:false
+            })
+        }
+        else{
+            this.setState({
+                type2:true
             })
         }
     }
@@ -79,7 +133,7 @@ class DetailsPokemon extends React.Component{
             this.props.actions.deleteFav(this.state.pokemon.sprites)
         }
         else{
-            if(this.props.pokemonFav.length<6){
+            if(this.props.pokemonFav == null || this.props.pokemonFav.length<6){
                 this.props.actions.addFav(this.state.pokemon.sprites)
             }
             else{
@@ -105,7 +159,7 @@ class DetailsPokemon extends React.Component{
                     </View>
                     <View style={{flex:10, alignItems:'center',justifyContent:'center'}}>
                         <View style={{flex:1, alignItems:'center',justifyContent:'center'}}>
-                            <Image style={{width: 150, height: 150}} source={{uri: `${this.state.pokemon.sprites}`}}/>
+                            <Image style={{width: 200, height: 200}} source={{uri: `${this.state.pokemon.sprites}`}}/>
                         </View>
                         <View style={{flex:1, alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                             <View style={{flex:1, alignItems:'flex-end',justifyContent:'center'}}>
@@ -118,8 +172,11 @@ class DetailsPokemon extends React.Component{
                         </View>
                         <View style={{height: 1, width: "100%", backgroundColor: "black"}}/>
                         <View style={{flex:2, alignItems:'center',justifyContent:'center'}}>
-                            <View style={{flex:1, alignItems:'center',justifyContent:'center'}}>
-                                <Text style={{fontSize: 10}}>Types</Text>
+                            <View style={{flex:1, alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                                <Image style={{width: 70, height: 30, marginRight:5}} source={this.getType(this.state.pokemon.type_name[0].type.name)}/>
+                                {
+                                    this.state.type2 ? (<Image style={{width: 70, height: 30, marginLeft:5}} source={this.getType(this.state.pokemon.type_name[1].type.name)}/>): null
+                                }
                             </View>
                             <View style={{flex:1, alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                                 <View style={{flex:1, alignItems:'center',justifyContent:'center'}}>

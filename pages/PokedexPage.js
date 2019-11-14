@@ -55,14 +55,16 @@ class PokedexPage extends React.Component{
             this.props.pokedex!==null?(
             <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <NavigationEvents onDidFocus={() => this.onRefresh()} />
-                <ImageBackground source={require('../assets/plaineDecor.png')} style={{width: '100%', height: '100%'}}>
+                <LinearGradient colors={['#019ed8','#007ba8']} style={{width:'100%', height:'100%'}}>
+                
                     <FlatList 
                         data={this.props.pokedex}
                         renderItem={({ item }) => 
                             <View style={styles.card}>
                                 <TouchableOpacity onPress={() => this.onPressPokemon(item)}>
-                                <ImageBackground style={{width: width - 25, height: height - 40}} source={{uri: `${item.sprites}`}} resizeMode='stretch'>
+                                <ImageBackground style={{width: width - 25, height: height - 40, backgroundColor:'#01a2d8'}} source={{uri: `${item.sprites}`}} resizeMode='stretch'>
                                     <Image style={{width: 15, height: 15}} source={this.estFavoris(item.sprites)} resizeMode='stretch'/>
+                                    <Text style={{position: "absolute",bottom:0,right:0}}>#{item.id}</Text>
                                 </ImageBackground>
                                 </TouchableOpacity>
                             </View>
@@ -70,7 +72,7 @@ class PokedexPage extends React.Component{
                         numColumns={4}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                </ImageBackground>
+                </LinearGradient>
             </View>):(
             <View></View>
             )

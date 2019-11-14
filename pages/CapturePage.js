@@ -122,7 +122,7 @@ class CapturePage extends React.Component{
                                     weight : resp2.data.weight, 
                                     id: resp.data.id, 
                                     sprites: resp2.data.sprites.front_default, 
-                                    type_name: resp.data.types,
+                                    type_name: resp2.data.types,
                                     description : description,
                                     categorie: categorie})
                                 this.setState({
