@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, StatusBar, Alert, TouchableHighlight, ActivityIndicator, Vibration } from 'react-native';
+import { StyleSheet, Text, View, Image, StatusBar, Alert, TouchableHighlight, ActivityIndicator, Vibration, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Loading from '../components/Loading';
 import TickToDate from '../components/TickToDate';
@@ -20,6 +20,9 @@ class CapturePage extends React.Component{
         animating: false,
         hidden: true,
         hidden2: true,
+        second:10,
+        timerprogress:false,
+        disabled:false,
     }
     
 
@@ -27,7 +30,6 @@ class CapturePage extends React.Component{
 
     animate(bool){
         if (bool == true){
-            this.setState({animating: false});
             this.setState({animating: false});
             console.log("animate "+this.state.animating);
         }
@@ -61,14 +63,19 @@ class CapturePage extends React.Component{
     }
 
     findPokemon =()=> {
+        this.setState({disabled: true})
         //this.animate(this.state.animating);
-
+        if (this.state.timerprogress!== true){
+        
+        
         navigator.geolocation.getCurrentPosition(
             position => {
               //  this.wait(3000);
+              
                 this.setState({pokemon: null})
                 this.setState({hidden2: false});
-                Vibration.vibrate(PATTERN);
+                Vibration.vibrate(PATTERN, true);
+                this.Start();
                 console.log("animate "+this.state.animating);
                 this.setState({position});                
                 console.log("longitude : "+this.state.position.coords.longitude);
@@ -119,10 +126,13 @@ class CapturePage extends React.Component{
                                     description : description,
                                     categorie: categorie})
                                 this.setState({
-                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default}
+                                    pokemon:{name:nom, sprite: resp2.data.sprites.front_default, id: resp.data.id}
                                 })
+                                Vibration.cancel();
+
                             })
                         }
+
                         else{
                             this.props.pokemonServ.getPokemonDataNumero(pokemonNum).then((resp2) =>{
                                 this.setState({
@@ -130,6 +140,8 @@ class CapturePage extends React.Component{
                                 })
                             })
                             alert(`${nom} déjà trouvé, allez plus loin !`)
+                            this.setState({disabled: false})
+                            Vibration.cancel();
                         }
                         console.log("pokedex"+this.props.pokedex)
                         console.log('test2')
@@ -142,13 +154,23 @@ class CapturePage extends React.Component{
 
                 });
             },
-            error => Alert.alert(error.message),
+            error => this.catchError(),
             {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
         )
+        }else {
+            alert('Il vous reste encore '+this.state.second+ 'secondes avant une nouvelle capture !');
+            this.setState({disabled: false})
+        }
     }
 
 
-    
+    catchError(){
+        alert("Problème de connexion veuillez relancer.");
+        Vibration.cancel();
+        this.setState({hidden2: true});
+        this.Reset();
+        this.setState({disabled: false})
+    }
 
     findNumber(long,lat){
 
@@ -172,9 +194,28 @@ class CapturePage extends React.Component{
         return number;
     }
 
+    _interval= null;
 
+    Start = () => {
+        this._interval = setInterval(()=>{
+            this.setState({
+                second: this.state.second-1,
+                timerprogress: true
+            })
+            this.Reset();
+        },1000);
+    }
 
-
+    Reset = () => {
+        if(this.state.second==0){
+            this.setState({
+                second:10
+            })
+            clearInterval(this._interval);
+            this.setState({timerprogress: false})
+            this.setState({disabled: false})
+        }
+    }
 /*
     //Nouvelle version qui marchait sur mon binome mais pas dans mon code (pas d'erreur juste ça marche pas)
     findCoordinates = () => {
@@ -200,24 +241,26 @@ class CapturePage extends React.Component{
         return(
             this.state.position !== null && this.state.pokemon !==null?(
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <Text>Capture de Pokemon2</Text>
-                    <Text>{this.state.pokemon.name}</Text>
-
+                    <Text style={{fontSize:38}}>Capture de Pokemon</Text>
+                    <Text style={{fontSize:22}}>{this.state.pokemon.name}</Text>
                     <Image style={{width:200, height: 200}} source={{uri : `${this.state.pokemon.sprite}` }}></Image>
+                    <Text style={{fontSize:22}}>#{this.state.pokemon.id}</Text>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
                         />
                     <Image style={this.state.hidden2== true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/test.gif')}
                         />
-                    <TouchableHighlight  onPress={this.findPokemon}>
+                    <TouchableWithoutFeedback  onPress={this.findPokemon} disabled ={this.state.disabled}>
                         <Image style={{width:100, height: 100}}
                             source={require('../assets/capture.png')}
                         />
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
+                    <Text>{this.state.second}</Text>
+
                 </View>):(
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <Text>Capture de Pokemon1</Text>
+                    <Text style={{fontSize:30}}>Capture de Pokemon</Text>
                     <Image style={this.state.hidden == true? (gif.hidden):(gif.notHidden)}
                             source={require('../assets/catched.png')}
                         />
@@ -227,11 +270,12 @@ class CapturePage extends React.Component{
                     <View>
 
                     </View>
-                    <TouchableHighlight  onPress={this.findPokemon}>
+                    <TouchableWithoutFeedback  onPress={this.findPokemon} disabled ={this.state.disabled}>
                         <Image style={{width:100, height: 100}}
                             source={require('../assets/capture.png')}
                         />
-                    </TouchableHighlight>
+                    </TouchableWithoutFeedback>
+                    <Text>{this.state.second}</Text>
                 </View>
 
             )
